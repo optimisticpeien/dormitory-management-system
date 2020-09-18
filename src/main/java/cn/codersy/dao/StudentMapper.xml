@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.codersy.dao.StudentMapper">
+    <select id="totalCount" resultType="Integer">
+        SELECT COUNT(s_studentid) FROM d_student
+        <where>
+            <if test="s_studentid != null">
+                and s_studentid LIKE CONCAT('%', #{s_studentid}, '%')
+            </if>
+            <if test="s_name != null">
+                and s_name LIKE CONCAT('%', #{s_name}, '%')
+            </if>
+            <if test="s_sex != null">
+                and s_sex LIKE CONCAT('%', #{s_sex}, '%')
+            </if>
+            <if test="s_phone != null">
+                and s_phone LIKE CONCAT('%', #{s_phone}, '%')
+            </if>
+            <if test="s_classid != null">
+                and s_classid LIKE CONCAT('%', #{s_classid}, '%')
+            </if>
+            <if test="s_classname != null">
+                and s_classname LIKE CONCAT('%', #{s_classname}, '%')
+            </if>
+            <if test="s_dormitory != null">
+                and s_dormitory LIKE CONCAT('%', #{s_dormitory}, '%')
+            </if>
+        </where>
+    </select>
+
+    <select id="getStudentList" parameterType="Student" resultType="Student">
+        SELECT * FROM d_student
+        <where>
+            <if test="s_studentid != null">
+                and s_studentid LIKE CONCAT('%', #{s_studentid}, '%')
+            </if>
+            <if test="s_name != null">
+                and s_name LIKE CONCAT('%', #{s_name}, '%')
+            </if>
+            <if test="s_sex != null">
+                and s_sex LIKE CONCAT('%', #{s_sex}, '%')
+            </if>
+            <if test="s_phone != null">
+                and s_phone LIKE CONCAT('%', #{s_phone}, '%')
+            </if>
+            <if test="s_classid != null">
+                and s_classid LIKE CONCAT('%', #{s_classid}, '%')
+            </if>
+            <if test="s_classname != null">
+                and s_classname LIKE CONCAT('%', #{s_classname}, '%')
+            </if>
+            <if test="s_dormitory != null">
+                and s_dormitory LIKE CONCAT('%', #{s_dormitory}, '%')
+            </if>
+        </where>
+        GROUP BY s_id
+        LIMIT #{pageSize} OFFSET #{startIndex};
+    </select>
+
+    <insert id="addStudent" parameterType="Student" keyProperty="s_id" useGeneratedKeys="true">
+        INSERT INTO d_student(s_studentid, s_name, s_sex, s_age, s_phone, s_classid, s_classname, s_dormitoryid)
+        VALUES (s_studentid, s_name, s_sex, s_age, s_phone, s_classid, s_classname, s_dormitoryid)
+    </insert>
+
+    <delete id="deleteStudentById" parameterType="Integer">
+        DELETE FROM d_student
+        WHERE s_id = #{s_id}
+    </delete>
+
+    <update id="updateStudent" parameterType="Student">
+        UPDATE d_student
+        <set>
+            <if test="s_studentid != null">
+                s_studentid = #{s_studentid},
+            </if>
+            <if test="s_name != null">
+                s_name = #{s_name},
+            </if>
+            <if test="s_sex != null">
+                s_sex = #{s_sex},
+            </if>
+            <if test="s_age != null">
+                s_age = #{s_age},
+            </if>
+            <if test="s_phone != null">
+                s_age = #{s_age},
+            </if>
+            <if test="s_classid != null">
+                s_classid = #{s_classid},
+            </if>
+            <if test="s_classname != null">
+                s_classname = #{s_classname},
+            </if>
+            <if test="s_dormitory != null">
+                s_dormitory = #{s_dormitory},
+            </if>
+        </set>
+            WHERE s_id = #{s_id}
+    </update>
+
+    <select id="findStudentById" resultType="Student">
+        SELECT * FROM d_student WHERE s_id = #{s_id}
+    </select>
+
+    <select id="getAllStudent" resultType="Student">
+        SELECT * FROM d_student;
+    </select>
+</mapper>

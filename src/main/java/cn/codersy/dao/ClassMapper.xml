@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.codersy.dao.ClassMapper">
+    <!--分页查询获取班级列表-->
+    <select id="getClassList" parameterType="Class" resultType="Class">
+        SELECT * FROM d_class
+        <where>
+            <if test="c_classid != null">
+                AND c_classid LIKE CONCAT('%', #{c_classid}, '%')
+            </if>
+            <if test="c_classname != null">
+                AND c_classname LIKE CONCAT('%', #{c_classname}, '%')
+            </if>
+            <if test="c_counsellor != null">
+                AND c_counsellor LIKE CONCAT('%', #{c_counsellor}, '%')
+            </if>
+        </where>
+        ORDER BY c_id
+        LIMIT #{pageSize} OFFSET #{startIndex}
+    </select>
+    <!--分页查询符合条件的记录总数-->
+    <select id="totalCount" resultType="Integer">
+        SELECT COUNT(c_id) FROM d_class
+        <where>
+            <if test="c_classid != null">
+                AND c_classid LIKE CONCAT('%', #{c_classid}, '%')
+            </if>
+            <if test="c_classname != null">
+                AND c_classname LIKE CONCAT('%', #{c_classname}, '%')
+            </if>
+            <if test="c_counsellor != null">
+                AND c_counsellor LIKE CONCAT('%', #{c_counsellor}, '%')
+            </if>
+        </where>
+    </select>
+
+    <!--增加班级-->
+    <insert id="addClass" parameterType="Class" keyProperty="c_id" useGeneratedKeys="true">
+        INSERT INTO d_class (c_classid, c_classname, c_counsellor)
+        VALUES (#{c_classid}, #{c_classname}, #{c_counsellor});
+    </insert>
+
+    <!--根据id删除班级-->
+    <delete id="deleteClassById">
+        DELETE FROM d_class WHERE c_id = #{c_id};
+    </delete>
+
+    <!--修改班级信息-->
+    <update id="updateClass" parameterType="Class">
+        UPDATE d_class
+        <set>
+            <if test="c_classid != null">
+                c_classid = #{c_classid},
+            </if>
+            <if test="c_classname != null">
+                c_classname = #{c_classname},
+            </if>
+            <if test="c_counsellor != null">
+                c_counsellor = #{c_counsellor}
+            </if>
+        </set>
+        WHERE c_id = #{c_id};
+    </update>
+
+    <!--根据id查找班级-->
+    <select id="findClassById" resultType="Class">
+        SELECT * FROM d_class WHERE c_id = #{c_id}
+    </select>
+
+    <!--获取所有班级信息（不分页）-->
+    <select id="getAllClass" resultType="Class">
+        SELECT * FROM d_class;
+    </select>
+
+    <!--获取班级学生信息（一对多查询）-->
+    <!--按照结果嵌套查询-->
+    <select id="findClassStudent" resultMap="classStudent" parameterType="Class">
+        SELECT c.c_id AS c_id, c.c_classid AS c_classid,
+               c.c_classname AS c_classname, c.c_counsellor AS c_counsellor,
+               s.s_id AS s_id, s.s_studentid AS s_studentid,
+               s.s_name AS s_sname, s.s_sex AS s_sex, s.s_age AS s_age,
+               s.s_phone AS s_phone, s.s_classid AS s_classid,
+               s.s_classname AS s_classname, s.s_dormitoryid AS s_dormitoryid
+        FROM d_class c JOIN d_student s ON c.c_classid = s.s_classid
+                                               AND c.c_classname = s.s_classname
+        WHERE c.c_classid = #{c_classid} AND c.c_classname = #{c_classname}
+    </select>
+    <resultMap id="classStudent" type="cn.codersy.pojo.Class">
+        <id property="c_cid" column="c_cid"/>
+        <result property="c_classid" column="c_classid"/>
+        <result property="c_classname" column="c_classname"/>
+        <result property="c_counsellor" column="c_counsellor"/>
+        <collection property="students" ofType="cn.codersy.pojo.Student" javaType="ArrayList">
+            <id property="s_id" column="s_id"/>
+            <result property="s_studentid" column="s_studentid"/>
+            <result property="s_name" column="s_name"/>
+            <result property="s_sex" column="s_sex"/>
+            <result property="s_age" column="s_age"/>
+            <result property="s_phone" column="s_phone"/>
+            <result property="s_classid" column="s_classid"/>
+            <result property="s_classname" column="s_classname"/>
+            <result property="s_dormitoryid" column="s_dormitoryid"/>
+        </collection>
+    </resultMap>
+
+</mapper>

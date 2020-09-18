@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.codersy.dao.DormitoryMapper">
+    <select id="getDormitoryList" resultType="Dormitory" parameterType="Dormitory">
+        SELECT * FROM d_dormitory
+        <where>
+            <if test="s_dormitoryid != null">
+                AND d_dormitoryid LIKE CONCAT('%', #{d_dormitoryid}, '%')
+            </if>
+            <if test="d_dormbuilding != null">
+                AND d_dormbuilding LIKE CONCAT('%', #{d_dormbuilding}, '%')
+            </if>
+            <if test="a_name != null">
+                AND a_name LIKE CONCAT('%', #{a_name}, '%')
+            </if>
+        </where>
+        GROUP BY d_id
+        LIMIT #{pageSize} OFFSET #{startIndex};
+    </select>
+
+    <select id="totalCount" resultType="Integer">
+        SELECT COUNT(d_id) FROM d_dormitory
+        <where>
+            <if test="s_dormitoryid != null">
+                AND d_dormitoryid LIKE CONCAT('%', #{d_dormitoryid}, '%')
+            </if>
+            <if test="d_dormbuilding != null">
+                AND d_dormbuilding LIKE CONCAT('%', #{d_dormbuilding}, '%')
+            </if>
+            <if test="a_name != null">
+                AND a_name LIKE CONCAT('%', #{a_name}, '%')
+            </if>
+        </where>
+    </select>
+
+    <select id="findDormitoryById" parameterType="Integr" resultType="Dormitory">
+        SELECT * FROM d_dormitory WHERE d_id = #{d_id}
+    </select>
+
+    <insert id="addDormitory" parameterType="Dormitory" keyProperty="d_id" useGeneratedKeys="true">
+        INSERT INTO d_dormitory(d_dormitoryid, d_dormbuilding, d_bedtotal, d_bed, a_name)
+        VALUES (#{d_dormitoryid}, #{d_dormbuilding}, #{d_bedtotal}, #{d_bed}, #{a_name})
+    </insert>
+
+    <delete id="deleteDormitoryById">
+        DELETE FROM d_dormitory WHERE d_id = #{d_id}
+    </delete>
+
+    <update id="updateDormitory" parameterType="Dormitory">
+        UPDATE d_dormitory
+        <set>
+            <if test="d_dormitoryid != null">
+                d_dormitoryid = #{s_dormitoryid},
+            </if>
+            <if test="d_dormbuilding != null">
+                d_dormbuilding = #{d_dormbuilding},
+            </if>
+            <if test="d_bedtotal != null">
+                d_bedtotal = #{d_bedtotal},
+            </if>
+            <if test="d_bed != null">
+                d_bed = #{d_bed},
+            </if>
+            <if test="a_name != null">
+                a_name = #{a_name},
+            </if>
+        </set>
+        WHERE d_id = #{d_id}
+    </update>
+
+    <select id="findDormitoryStudent" parameterType="Dormitory" resultMap="dormitoryStudent">
+        SELECT d.*, s.* FROM d_dormitory d JOIN d_student s
+        ON d.d_dormitoryid = s.s_dormitoryid
+        WHERE d.d_dormitoryid = #{d_dormitoryid}
+    </select>
+
+    <resultMap id="dormitoryStudent" type="cn.codersy.pojo.Dormitory">
+        <id property="d_id" column="d_id"/>
+        <result property="d_dormitoryid" column="d_dormitoryid"/>
+        <result property="d_dormbuilding" column="d_dormbuilding"/>
+        <result property="d_bedtotal" column="d_bedtotal"/>
+        <result property="d_bed" column="d_bed"/>
+        <result property="a_name" column="a_name"/>
+        <collection property="students" ofType="cn.codersy.pojo.Student" javaType="ArrayList">
+            <id property="s_id" column="s_id"/>
+            <result property="s_studentid" column="s_studentid"/>
+            <result property="s_name" column="s_name"/>
+            <result property="s_sex" column="s_sex"/>
+            <result property="s_age" column="s_age"/>
+            <result property="s_phone" column="s_phone"/>
+            <result property="s_classid" column="s_classid"/>
+            <result property="s_classname" column="s_classname"/>
+            <result property="s_dormitoryid" column="s_dormitoryid"/>
+        </collection>
+     </resultMap>
+</mapper>

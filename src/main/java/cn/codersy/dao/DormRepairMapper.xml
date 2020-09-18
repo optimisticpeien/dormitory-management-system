@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.codersy.dao.DormRepairMapper">
+    <select id="totalCount" resultType="Integer">
+        SELECT COUNT(r_id) FROM d_dormrepair
+        <where>
+            <if test="d_id != null">
+                AND d_id LIKE CONCAT('%', #{d_id}, '%')
+            </if>
+            <if test="d_dormbuilding != null">
+                AND d_dormbuilding LIKE CONCAT('%', #{d_dormbuilding}, '%')
+            </if>
+        </where>
+    </select>
+
+    <select id="getDormRepairList" resultType="DormitoryRepair" parameterType="DormitoryRepair">
+        SELECT * FROM d_dormrepair
+        <where>
+            <if test="d_id != null">
+                AND d_id LIKE CONCAT('%', #{d_id}, '%')
+            </if>
+            <if test="d_dormbuilding != null">
+                AND d_dormbuilding LIKE CONCAT('%', #{d_dormbuilding}, '%')
+            </if>
+        </where>
+        ORDER BY r_id
+        LIMIT #{pageSize} OFFSET #{startIndex}
+    </select>
+
+    <insert id="addDormRepair" parameterType="DormitoryRepair">
+        INSERT INTO d_dormrepair(d_id, d_dormbuilding, r_name, reason, create_time, update_time)
+        VALUES (#{d_id}, #{d_dormbuilding}, #{r_name}, #{reason}, now(), now())
+    </insert>
+
+    <delete id="deleteDormRepairById" parameterType="Integer">
+        DELETE d_dormrepair WHERE r_id = #{r_id};
+    </delete>
+
+    <update id="updateDormRepair" parameterType="DormitoryRepair">
+        UPDATE d_dormrepair
+        <set>
+            <if test="d_id != null">
+                d_id = #{d_id},
+            </if>
+            <if test="d_dormbuilding != null">
+                d_dormbuilding = #{d_dormbuilding},
+            </if>
+            <if test="r_name != null">
+                r_name = #{r_name},
+            </if>
+            <if test="reason != null">
+                reason = #{reason},
+            </if>
+            <if test="update_time != null">
+                update_time = now(),
+            </if>
+        </set>
+            WHERE r_id = #{r_id}
+    </update>
+
+    <select id="findDormRepairById" parameterType="DormitoryRepair">
+        SELECT * FROM d_dormrepair WHERE r_id = #{r_id};
+    </select>
+
+    <select id="getAllDormRepair" resultType="DormitoryRepair">
+        SELECT * FROM d_dormrepair;
+    </select>
+</mapper>

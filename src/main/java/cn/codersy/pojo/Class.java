@@ -17,7 +17,8 @@ public class Class {
     private Integer c_id;
     private Integer c_classid;
     private String c_classname;
+    // 负责人
     private String c_counsellor;
     // 班级与学生一对多关系
-    private List<Student> studens;
+    private List<Student> students;
 }

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.codersy.dao.DormitoryMapper">
+    <select id="totalCount" resultType="Integer">
+        SELECT COUNT(d_id) FROM d_dormclean
+        <where>
+            <if test="d_id != null">
+                AND d_id LIKE CONCAT('%', #{d_id}, '%')
+            </if>
+            <if test="d_dormbuilding != null">
+                AND d_dormbuilding LIKE CONCAT('%', #{d_dormbuilding}, '%')
+            </if>
+            <if test="d_grade != null">
+                AND d_grade LIKE CONCAT('%', #{d_grade}, '%')
+            </if>
+        </where>
+    </select>
+
+    <select id="getDormCleanList" resultType="DormitoryClean" parameterType="DormitoryClean">
+        SELECT * FROM d_dormclean
+        <where>
+            <if test="d_id != null">
+                AND d_id LIKE CONCAT('%', #{d_id}, '%')
+            </if>
+            <if test="d_dormbuilding != null">
+                AND d_dormbuilding LIKE CONCAT('%', #{d_dormbuilding}, '%')
+            </if>
+            <if test="d_grade != null">
+                AND d_grade LIKE CONCAT('%', #{d_grade}, '%')
+            </if>
+        </where>
+        ORDER BY g_id
+        LIMIT #{pageSize} OFFSET #{startIndex}
+    </select>
+
+    <insert id="addDormClean" parameterType="DormitoryClean">
+        INSERT INTO d_dormclean(d_id, d_dormbuilding, d_grade, create_time, update_time)
+        VALUES (#{d_id}, #{d_dormbuilding}, #{d_grade}, now(), now())
+    </insert>
+
+    <delete id="deleteDormCleanById" parameterType="Integer">
+        DELETE FROM d_dormclean WHERE g_id = #{g_id}
+    </delete>
+
+    <update id="updateDormClean" parameterType="DormitoryClean">
+        UPDATE d_dormclean
+        <set>
+            <if test="d_id != null">
+                d_id = #{d_id},
+            </if>
+            <if test="d_dormbuilding != null">
+                d_dormbuilding = #{d_dormbuilding},
+            </if>
+            <if test="d_grade != null">
+                d_grade = #{d_grade},
+            </if>
+            <if test="update_time != null">
+                update_time = now(),
+            </if>
+        </set>
+            WHERE g_id = #{g_id}
+    </update>
+
+    <select id="getAllDormClean" resultType="DormitoryClean">
+        SELECT * FROM d_dormclean;
+    </select>
+</mapper>

@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.codersy.dao.AdminMapper">
+    <!--登录查询动态SQL-->
+    <select id="findAdmin" parameterType="Admin" resultType="Admin">
+        SELECT * FROM d_admin WHERE
+        <if test="a_username != null ">
+            a_username = #{a_username}
+        </if>
+        <if test="a_password != null">
+            AND a_password = #{a_password}
+        </if>
+    </select>
+
+    <!--分页查询管理员信息-->
+    <select id="getAdminList" parameterType="Admin" resultType="Admin">
+        SELECT * FROM d_admin
+        <where>
+            <if test="a_username != null">
+                AND a_username LIKE CONCAT('%', #{a_username}, '%')
+            </if>
+            <if test="a_describe != null">
+                AND a_describe LIKE CONCAT('%', #{a_describe}, '%')
+            </if>
+            <if test="a_id != null">
+                AND a_id LIKE CONCAT('%', #{a_id}, '%')
+            </if>
+        </where>
+        ORDER BY a_id ASC
+        LIMIT #{pageSize} OFFSET #{startIndex};
+    </select>
+
+    <!--查询数据总数-->
+    <select id="totalCount">
+        SELECT COUNT(a_id) FROM d_admin
+        <where>
+            <if test="a_username != null ">
+                AND a_username LIKE CONCAT('%', #{a_username}, '%')
+            </if>
+            <if test="a_describe != null">
+                AND a_describe LIKE CONCAT('%', #{a_describe}, '%')
+            </if>
+            <if test="a_id != null">
+                AND a_id LIKE CONCAT('%', #{a_id}, '%')
+            </if>
+        </where>
+    </select>
+
+    <!--添加管理员-->
+    <insert id="addAdmin" parameterType="Admin" keyProperty="a_id" useGeneratedKeys="true">
+        INSERT INTO d_admin(a_username, a_password, a_name, a_phone, a_power, a_describe)
+        VALUES (#{a_username}, #{a_password}, #{a_name}, #{a_phone}, #{a_power}, #{a_describe});
+    </insert>
+
+    <!--根据id删除管理员-->
+    <delete id="deleteAdminById">
+        DELETE FROM d_admin WHERE a_id = #{a_id};
+    </delete>
+
+    <!--修改管理员信息:动态更新-->
+    <update id="updateAdmin" parameterType="Admin">
+        UPDATE d_admin
+        <set>
+            <if test="a_username != null">
+                a_username = #{a_username},
+            </if>
+            <if test="a_password != null">
+                a_password = #{a_password},
+            </if>
+            <if test="a_name != null ">
+                a_name = #{a_name},
+            </if>
+            <if test="a_phone != null">
+                a_phone = #{a_phone},
+            </if>
+            <if test="a_power != null">
+                a_power = #{a_power},
+            </if>
+            <if test="a_describe != null">
+                a_describe = #{a_describe}
+            </if>
+        </set>
+        WHERE a_id = #{a_id};
+    </update>
+
+    <!--根据id查找管理员-->
+    <select id="findAdminById" resultType="Admin">
+        SELECT * FROM d_admin WHERE a_id = #{a_id};
+    </select>
+
+    <!--获取所有管理员信息（不分页）-->
+    <select id="getAllAdmin" resultType="Admin">
+        SELECT * FROM d_admin;
+    </select>
+</mapper>
