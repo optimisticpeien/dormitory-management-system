@@ -35,7 +35,7 @@
     </insert>
 
     <delete id="deleteDormRepairById" parameterType="Integer">
-        DELETE d_dormrepair WHERE r_id = #{r_id};
+        DELETE FROM d_dormrepair WHERE r_id = #{r_id};
     </delete>
 
     <update id="updateDormRepair" parameterType="DormitoryRepair">
